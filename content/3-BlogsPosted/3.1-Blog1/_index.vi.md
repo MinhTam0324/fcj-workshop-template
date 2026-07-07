@@ -42,6 +42,7 @@ Việc chọn nơi lưu trữ tùy nhu cầu:
 * **Về chi phí:** ngoài phí subscription Shield Advanced, bật flow logs còn tốn thêm phí vended logs của CloudWatch Logs và phí của tài nguyên đích (lưu trữ S3/log group, hoặc xử lý Firehose).
 
 ![Sơ đồ luồng hoạt động của Attack Flow Logs](../images/so-do-luong.png)
+
 *Sơ đồ trên là flow diagram mình vẽ để minh họa luồng hoạt động, chưa phải reference architecture để triển khai*
 
 ## Tóm lại
