@@ -1,59 +1,32 @@
 ---
 title: "Worklog Tuần 4"
-date: 2024-01-01
-weight: 1
+date: 2026-05-11
+weight: 4
 chapter: false
 pre: " <b> 1.4. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
 
+### Mục tiêu Tuần 4:
+- Hiểu thêm về Amazon EC2: Instance Type, AMI, lưu trữ và tự động mở rộng.
+- Tìm hiểu các dịch vụ tính toán và lưu trữ khác: Amazon Lightsail, EFS/FSx.
+- Thực hành các lab về những dịch vụ AWS cơ bản.
 
-### Mục tiêu tuần 4:
+### Các công việc thực hiện trong tuần:
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Tài liệu tham khảo |
+| --- | ---- | ---------- | --------------- | ------------------ |
+| 2 | - Học thêm về Amazon EC2 : <br>&emsp; + Instance Type (CPU, Memory, Network, Storage) <br>&emsp; + Hardware Node, Placement Option <br>&emsp; + Hypervisor (Nitro, HVM, PV) và AMI | 11/05/2026 | 11/05/2026 | <https://www.youtube.com/@AWSStudyGroup/courses> |
+| 3 | - Học về lưu trữ cho EC2: <br>&emsp; + EBS, Instance Store <br>&emsp; + Key Pair, Snapshot/Backup <br> - Thực hành lab IAM | 12/05/2026 | 12/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 4 | - Học EC2 User Data, Meta Data và EC2 Auto Scaling <br> - Thực hành lab AWS CLI | 13/05/2026 | 13/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 5 | - Tìm hiểu Amazon Lightsail và Amazon EFS/FSx <br> - Thực hành lab Static Website Hosting với Amazon S3 | 14/05/2026 | 14/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 6 | - Ôn tập kiến thức EC2 trong tuần <br> - Thực hành lab giám sát với Amazon CloudWatch | 15/05/2026 | 15/05/2026 | <https://cloudjourney.awsstudygroup.com/> |
 
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
-
-### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
-
-### Kết quả đạt được tuần 4:
-
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Đã tạo và cấu hình AWS Free Tier account thành công.
-
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
-
+### Kết quả đạt được trong Tuần 4:
+- Hiểu cách chọn cấu hình EC2 qua Instance Type (quyết định CPU, Memory, Network, Storage); không chọn trực tiếp hardware node mà thông qua Instance Type, Placement Option và AMI.
+- Nắm được khái niệm AMI: file template chứa hệ điều hành và lựa chọn hypervisor, dùng để provision một hoặc nhiều EC2 instance; biết 3 loại hypervisor
+- Phân biệt hai loại lưu trữ cho EC2:
+  - EBS: lưu trữ dạng khối, kết nối qua kênh mạng riêng, replicate giữa 3 storage node trong 1 AZ để đạt độ sẵn sàng cao — phù hợp dữ liệu quan trọng
+  - Instance Store: NVMe gắn trực tiếp trên hardware node, tốc độ cao nhưng mất dữ liệu khi stop máy — chỉ phù hợp cache/buffer
+- Hiểu được EC2 User Data (script chạy một lần duy nhất khi khởi tạo, dùng cài đặt ứng dụng tự động) và Meta Data (thông tin về chính instance, truy cập qua URL nội bộ, phục vụ tự động hóa).
+- EC2 Auto Scaling giúp tăng giảm số lượng instance theo scaling policy, tự đăng ký instance vào ELB và hoạt động trên nhiều AZ.
+- Nắm được Amazon Lightsail:phù hợp dự án nhỏ và môi trường test/dev.
+- Hoàn thành 4 bài lab: IAM, AWS CLI, hosting static website trên S3, giám sát với CloudWatch.

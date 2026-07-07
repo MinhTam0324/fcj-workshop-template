@@ -1,57 +1,30 @@
 ---
 title: "Week 9 Worklog"
-date: 2024-01-01
-weight: 1
+date: 2026-06-15
+weight: 9
 chapter: false
 pre: " <b> 1.9. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
-
 
 ### Week 9 Objectives:
-
-* Connect and get acquainted with members of First Cloud AI Journey.
-* Understand basic AWS services, how to use the console & CLI.
+- Implement the LiveCap project: a real-time Vietnamese-English bilingual captioning and translation web app.
+- Take on the Cloud Infrastructure and Network Security role: research services, design the network architecture, and draw the infrastructure diagrams.
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCAJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | ---- | ---------- | --------------- | ------------------ |
+| 2 | - Team meeting to assign tasks and agree on the MVP scope <br> - Took on the cloud infrastructure and network security role | 06/15/2026 | 06/15/2026 | |
+| 3 | - Research the AWS services used in the project: <br>&emsp; + Amazon Transcribe Streaming, Amazon Translate <br>&emsp; + Amazon S3, CloudFront, CloudWatch <br>&emsp; + Audio format requirements | 06/16/2026 | 06/16/2026 | <https://docs.aws.amazon.com/transcribe/> |
+| 4 | - Read and analyze LiveCap's main processing flows: <br>&emsp; + Real-time flow: Microphone → WebSocket → Transcribe → Translate → Frontend <br>&emsp; + Export flow: transcript → S3 → Presigned URL | 06/17/2026 | 06/17/2026 | |
+| 5 | - Design the network architecture for the system: <br>&emsp; + VPC, public/private subnets <br>&emsp; + Security Groups and routing for the backend EC2 <br>&emsp; + Placement of S3/CloudFront for the frontend | 06/18/2026 | 06/18/2026 | |
+| 6 | - Design the IAM permission model for Transcribe, Translate, S3, CloudWatch (least privilege) <br> - Draw the overall architecture and network diagrams with draw.io | 06/19/2026 | 06/19/2026 | |
 
 ### Week 9 Achievements:
-
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+- Took on the Cloud Infrastructure and Network Security role for the LiveCap project.
+- Understood the role of each AWS service in the system and analyzed the two main processing flows: the real-time captioning flow and the transcript export flow.
+- Designed the network architecture for the system:
+  - Separated public subnets (for components needing internet access) and private subnets
+  - Defined the Security Groups and routing needed for the backend EC2
+  - Placed the frontend on S3 and distributed it via CloudFront
+- Designed the IAM permission model following the least-privilege principle: each component is granted only the minimum permissions needed to call Transcribe, Translate, S3, and write CloudWatch logs.
+- Completed the overall architecture and network diagrams with draw.io, serving as the basis for infrastructure deployment in the following weeks.

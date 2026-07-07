@@ -1,59 +1,30 @@
 ---
 title: "Worklog Tuần 8"
-date: 2024-01-01
-weight: 1
+date: 2026-06-08
+weight: 8
 chapter: false
 pre: " <b> 1.8. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
 
+### Mục tiêu Tuần 8:
+- Chốt đề tài và lên ý tưởng cho project nhóm.
+- Vẽ sơ đồ kiến trúc cho project và học hỏi từ các kiến trúc mẫu có sẵn.
+- Nghiên cứu công cụ Kiro (AI IDE của AWS) để hỗ trợ phát triển project.
 
-### Mục tiêu tuần 8:
+### Các công việc thực hiện trong tuần:
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Tài liệu tham khảo |
+| --- | ---- | ---------- | --------------- | ------------------ |
+| 2 | - Họp nhóm thảo luận và chốt đề tài project <br> - Xác định bài toán và phạm vi của project | 08/06/2026 | 08/06/2026 | |
+| 3 | - Nghiên cứu các kiến trúc mẫu liên quan đến đề tài trên AWS Architecture Center <br> - Xác định các dịch vụ AWS sẽ sử dụng | 09/06/2026 | 09/06/2026 | <https://aws.amazon.com/architecture/> |
+| 4 | - Vẽ sơ đồ kiến trúc cho project bằng draw.io | 10/06/2026 | 10/06/2026 | <https://aws.amazon.com/architecture/> |
+| 5 | - Nghiên cứu Kiro - AI IDE của AWS: <br>&emsp; + Spec-driven development <br>&emsp; + Agent hooks và cách ứng dụng vào project | 11/06/2026 | 11/06/2026 | <https://kiro.dev/> |
+| 6 | - Hoàn thiện sơ đồ kiến trúc theo góp ý của nhóm <br> - Đối chiếu kiến trúc với các trụ cột của Well-Architected Framework | 12/06/2026 | 12/06/2026 | <https://aws.amazon.com/architecture/well-architected/> |
 
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
-
-### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
-
-### Kết quả đạt được tuần 8:
-
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Đã tạo và cấu hình AWS Free Tier account thành công.
-
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
-
+### Kết quả đạt được trong Tuần 8:
+- Chốt đề tài project nhóm, xác định rõ bài toán cần giải quyết và phạm vi thực hiện.
+- Tham khảo các kiến trúc mẫu trên AWS Architecture Center, học được cách các kiến trúc thực tế tổ chức dịch vụ và luồng dữ liệu.
+- Hoàn thành sơ đồ kiến trúc phiên bản đầu cho project bằng draw.io, áp dụng kỹ năng vẽ kiến trúc đã học từ những tuần đầu.
+- Nắm được Kiro - AI IDE của AWS:
+  - Hiểu cách tiếp cận spec-driven development: mô tả yêu cầu thành spec trước, sau đó AI hỗ trợ sinh code theo spec
+  - Tìm hiểu agent hooks để tự động hóa các tác vụ lặp lại trong quá trình phát triển
+- Đối chiếu kiến trúc project với các trụ cột Well-Architected Framework để phát hiện điểm cần cải thiện.

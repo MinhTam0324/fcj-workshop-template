@@ -1,57 +1,29 @@
 ---
 title: "Week 1 Worklog"
-date: 2024-01-01
+date: 2026-04-20
 weight: 1
 chapter: false
 pre: " <b> 1.1. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
-
 
 ### Week 1 Objectives:
-
-* Connect and get acquainted with members of First Cloud AI Journey.
-* Understand basic AWS services, how to use the console & CLI.
+- Get acquainted with the First Cloud AI Journey program and its learning environment.
+- Understand AWS fundamentals: what cloud computing is, AWS Global Infrastructure, and basic services.
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCAJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | ---- | ---------- | --------------- | ------------------ |
+| 2 | - Get familiar with the FCAJ learning environment <br> - Create an AWS account <br> - Complete beginner tasks to earn 200 AWS credits | 04/20/2026 | 04/20/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 3 | - Study Module 1: <br>&emsp; + What is Cloud Computing <br>&emsp; + What makes AWS different <br>&emsp; + How to start the cloud journey | 04/21/2026 | 04/21/2026 | <https://www.youtube.com/@AWSStudyGroup/courses> |
+| 4 | - Study Module 1: <br>&emsp; + AWS Global Infrastructure <br>&emsp; + AWS services management tools | 04/22/2026 | 04/22/2026 | <https://www.youtube.com/@AWSStudyGroup/courses> |
+| 5 | - Learn how to draw AWS architecture diagrams with draw.io | 04/23/2026 | 04/23/2026 | <https://www.youtube.com/@AWSStudyGroup/courses> |
+| 6 | - Practice basic labs from Module 1: <br>&emsp; + Create an AWS account <br>&emsp; + Set up Virtual MFA Device <br>&emsp; + Create admin group and admin user <br>&emsp; + Create budgets to manage costs | 04/24/2026 | 04/24/2026 | <https://www.youtube.com/@AWSStudyGroup/courses> |
 
 ### Week 1 Achievements:
-
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+- Created an AWS account and completed beginner tasks to earn 200 AWS credits.
+- Understood the fundamentals of cloud computing and what makes AWS different.
+  - Grasped the core concept of cloud computing: instead of investing in physical servers, users rent resources on the cloud (compute, storage, networking) over the Internet and pay based on usage
+  - AWS's key differentiators: massive global infrastructure, a rich ecosystem of services, and flexible pricing models
+  - Learned the concepts of Regions, Availability Zones, and Edge Locations in AWS Global Infrastructure
+- Learned how to draw basic AWS architecture diagrams with draw.io, using official AWS service icons
+- Completed basic hands-on labs: securing the account with MFA, creating an admin group/user (IAM), and setting up cost budgets.

@@ -6,34 +6,28 @@ chapter: false
 pre: " <b> 1. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
+Typically, and as a standard, a worklog spans about 3 months (throughout the internship period), with the weekly content as follows:
 
-**On this page**, you will need to introduce your worklog. **How** did you complete it? How many weeks did you take to complete the program? **What** did you do in those weeks?
+**Week 1:** [Getting familiar with AWS and its core services](1.1-week1/)
 
-Typically, and as a standard, a worklog is carried out over about 3 months (throughout the internship period) with weekly contents as follows:
+**Week 2:** [Exploring VPC and basic networking on AWS](1.2-week2/)
 
-**Week 1:** [Getting familiar with AWS and basic AWS services](1.1-week1/)
+**Week 3:** [Exploring advanced VPC and routing](1.3-week3/)
 
-**Week 2:** [Doing task A...](1.2-week2/)
+**Week 4:** [Exploring Compute services (EC2) on AWS](1.4-week4/)
 
-**Week 3:** [Doing task B...](1.3-week3/)
+**Week 5:** [Exploring storage services (S3) on AWS](1.5-week5/)
 
-**Week 4:** [Doing task C...](1.4-week4/)
+**Week 6:** [Exploring security on AWS and the Well-Architected Framework](1.6-week6/)
 
-**Week 5:** [Doing task D...](1.5-week5/)
+**Week 7:** [In-depth research on AWS security services](1.7-week7/)
 
-**Week 6:** [Doing task E...](1.6-week6/)
+**Week 8:** [Finalizing the topic, designing the project architecture, and exploring Kiro](1.8-week8/)
 
-**Week 7:** [Doing task G...](1.7-week7/)
+**Week 9:** [Designing the network architecture and infrastructure for the LiveCap project](1.9-week9/)
 
-**Week 8:** [Doing task H...](1.8-week8/)
+**Week 10:** [Deploying the network infrastructure and backend for LiveCap on AWS](1.10-week10/)
 
-**Week 9:** [Doing task I...](1.9-week9/)
+**Week 11:** [Finalizing the frontend infrastructure, securing connections, and writing the AWS Shield Advanced blog](1.11-week11/)
 
-**Week 10:** [Doing task L...](1.10-week10/)
-
-**Week 11:** [Doing task M...](1.11-week11/)
-
-**Week 12:** [Doing task N...](1.12-week12/)
+**Week 12:** [Wrapping up and finalizing the internship report](1.12-week12/)
