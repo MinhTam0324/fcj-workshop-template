@@ -41,7 +41,7 @@ The nice thing about splitting into these 3 blocks is the flexibility of combini
 * **On scope:** it currently only supports resources protected via Elastic IP. Common web entry points like CloudFront or ALB are not yet supported. In other words, systems sitting behind CloudFront/ALB can't use it for now.
 * **On cost:** on top of the Shield Advanced subscription fee, enabling flow logs also incurs additional CloudWatch Logs vended logs charges and the cost of the destination resources (S3 storage/log group, or Firehose processing).
 
-![Flow diagram of how Attack Flow Logs works](../images/so-do-luong.png)
+![Sơ đồ luồng hoạt động của Attack Flow Logs](/images/so-do-luong.jpg)
 
 *The diagram above is a flow diagram I drew to illustrate the operation flow, not a reference architecture for deployment*
 
@@ -49,4 +49,5 @@ The nice thing about splitting into these 3 blocks is the flexibility of combini
 
 Attack Flow Logs doesn't help Shield block better — it solves the problem of being able to see and prove the attack.
 
+**Link :** https://www.facebook.com/groups/awsstudygroupfcj/permalink/2207781819986778/
 **Source:** https://aws.amazon.com/blogs/security/gain-visibility-into-ddos-attacks-with-flow-logs-in-aws-shield-advanced/
