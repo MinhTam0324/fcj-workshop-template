@@ -1,46 +1,94 @@
 ---
-title: "Stream audio và tạo live caption"
-date: 2026-07-05
+title: "Phụ đề trực tiếp – Transcribe & Translate thực chiến"
+date: 2026-07-08
 weight: 2
 chapter: false
 pre: " <b> 5.4.2. </b> "
 ---
 
-## Pipeline audio và WebSocket
+## Pipeline thời gian thực hoạt động như thế nào
 
-```text
-Microphone
-  -> Web Audio worklet
-  -> PCM mono 16 kHz, 16-bit
-  -> CloudFront WSS /ws/transcribe
-  -> ALB
-  -> FastAPI trên Fargate
-  -> Amazon Transcribe Streaming
+Khi người dùng bấm **Start**, chuỗi sự kiện sau diễn ra tự động:
+
+```
+Microphone trình duyệt
+  → Web Audio API worklet (resample về 16 kHz)
+  → Các chunk PCM nhị phân gửi qua WebSocket (WSS)
+  → CloudFront /ws/transcribe
+  → Application Load Balancer
+  → FastAPI trên ECS Fargate (port 8000)
+  → Amazon Transcribe Streaming (hai stream song song: vi-VN và en-US)
+  → Amazon Translate (chỉ finalized segment)
+  → Caption row trả về qua đường WebSocket ngược lại
+  → Dashboard phụ đề trình duyệt
 ```
 
-Microphone chỉ bắt đầu khi backend ready và WebSocket đã mở. Chunk sinh ra lúc
-socket unavailable sẽ bị drop, tránh buffer phía client tăng không giới hạn.
+Microphone chỉ bắt đầu thu âm **sau khi** health check backend pass và kết nối
+WebSocket đã được thiết lập. Audio được tạo ra lúc socket chưa mở sẽ bị drop
+thay vì buffer.
 
-## Xử lý song ngữ
+## Chế độ dual-stream song ngữ
 
-Khi `BILINGUAL_DUAL_STREAM=true`, backend fan-out cùng PCM input vào Transcribe
-stream tiếng Việt và tiếng Anh, chọn kết quả phù hợp rồi dịch finalized segment
-sang ngôn ngữ còn lại. Partial result có thể là state tạm thời, nhưng chỉ
-finalized segment trở thành row cố định.
+Với `BILINGUAL_DUAL_STREAM=true`, backend chia mỗi chunk PCM vào hai Amazon
+Transcribe stream song song:
+
+1. **`vi-VN`** – nhận dạng giọng tiếng Việt
+2. **`en-US`** – nhận dạng giọng tiếng Anh
+
+Một bộ arbitrator chọn ngôn ngữ có finalized segment trước, rồi gửi text đó
+đến Amazon Translate để tạo ngôn ngữ còn lại. Kết quả là một caption row song
+ngữ:
+
+```
+[Tiếng Việt gốc]  |  [Bản dịch tiếng Anh]
+[Tiếng Anh gốc]   |  [Bản dịch tiếng Việt]
+```
+
+Chỉ các segment **finalized** mới trở thành caption row vĩnh viễn. Kết quả
+partial (interim) có thể hiển thị tạm thời trên UI nhưng không bao giờ được lưu.
 
 ## Khả năng phục hồi kết nối
 
-- Frontend gửi `ping` mỗi 30 giây; backend trả `pong`.
-- Disconnect bất ngờ khi recording được retry tối đa ba lần với backoff 1, 2, 4 giây.
-- Reconnect tạo backend session mới nhưng giữ các finalized row cũ.
-- Nếu retry thất bại, audio capture dừng và người dùng phải restart session.
-- Stop, disconnect, timeout, lỗi Transcribe và exception đều cleanup queue,
-  worker, stream và registry.
+| Sự kiện | Hành vi |
+|---|---|
+| Hoạt động bình thường | Frontend gửi `ping` mỗi 30 giây; backend trả lời `pong` |
+| Mất kết nối bất ngờ | Frontend thử lại tối đa 3 lần: 1 s, 2 s, 4 s backoff |
+| Kết nối lại thành công | Session backend mới bắt đầu; finalized row được giữ nguyên trên UI |
+| Hết lần thử lại | Âm thanh dừng thu; người dùng phải bấm Start lại |
+| Timeout 30 phút | Backend đóng session; frontend hiển thị "Phiên đã kết thúc" |
 
-## Guardrail cho session
+## Giới hạn session
 
-UI và backend cùng giới hạn session 30 phút. Backend còn reject khi vượt giới
-hạn global/per-IP trước khi mở managed AI work. Các giới hạn này kiểm soát việc
-dùng Transcribe và Translate ngoài ý muốn trong MVP.
+Backend từ chối kết nối mới khi vượt giới hạn:
 
-![Kết quả bước stream và trả finalized caption về dashboard](/images/5-Workshop/5.4-S3-onprem/result.png)
+- **4 session đồng thời** toàn hệ thống (một ECS task, bộ nhớ process)
+- **1 session trên mỗi client IP**
+
+Các giới hạn này ngăn chặn chi phí Transcribe/Translate phát sinh ngoài kiểm
+soát cho MVP. Trước khi scale lên nhiều task hơn, registry session phải chuyển
+sang DynamoDB hoặc Redis (state chung giữa các task).
+
+## Bắt đầu phiên phụ đề trực tiếp
+
+1. Mở `https://dpeohr327wt9l.cloudfront.net`
+2. Bấm **Start captioning** để đến `/app`
+3. Bấm **Start** – frontend wake backend nếu cần, rồi poll health
+4. Cho phép microphone khi trình duyệt hỏi
+5. Nói tiếng Anh hoặc tiếng Việt
+6. Xem caption row song ngữ finalized xuất hiện trên dashboard:
+
+![Dashboard phụ đề LiveCap hiển thị caption row song ngữ](/images/3-Project/livecap-dashboard.png)
+
+Dashboard production sẵn sàng bắt đầu phiên:
+
+![Dashboard production – điều khiển phiên và trạng thái trước khi bắt đầu](/images/5-Workshop/livecap-production-dashboard-ready.png)
+
+## Nếu microphone bị chặn?
+
+Nếu trình duyệt chặn truy cập microphone, LiveCap dừng trước khi mở bất kỳ
+stream nào và hiển thị thông báo lỗi rõ ràng thay vì để một session lỗi đang mở:
+
+![Frontend hiển thị lỗi yêu cầu quyền microphone](/images/5-Workshop/livecap-microphone-permission-required.png)
+
+Trong trường hợp này, cho phép microphone trong cài đặt site của trình duyệt
+và tải lại `/app`.
