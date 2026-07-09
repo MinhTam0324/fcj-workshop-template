@@ -5,6 +5,22 @@ weight: 5
 chapter: false
 pre: " <b> 5.5. </b> "
 ---
+
+## Quality gate trên GitHub Actions
+
+Workflow trên nhánh `main` chạy bốn job độc lập trước khi thay đổi được xem là
+đạt quality gate:
+
+- Quét secret bằng Gitleaks trên toàn bộ lịch sử Git.
+- Compile backend và chạy 204 test bằng pytest.
+- Chạy frontend test và tạo production build.
+- Kiểm tra Terraform format, `init -backend=false` và `validate`.
+
+![GitHub Actions LiveCap đã chạy thành công](/images/3-Project/github-actions-ci.png)
+
+CI chỉ thực hiện validation. Workflow không deploy, không chạy
+`terraform apply`, không destroy tài nguyên và không migrate Terraform state.
+
 ## Kiểm thử chức năng
 
 ### Backend – 204 Unit Test

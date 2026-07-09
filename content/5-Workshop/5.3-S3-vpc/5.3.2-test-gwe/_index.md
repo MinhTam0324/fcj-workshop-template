@@ -1,95 +1,146 @@
 ---
-title : "Test the Gateway Endpoint"
-date : 2024-01-01 
-weight : 2
-chapter : false
-pre : " <b> 5.3.2 </b> "
+title: "Deploy & Verify ECS Fargate Service"
+date: 2026-07-08
+weight: 2
+chapter: false
+pre: " <b> 5.3.2. </b> "
 ---
 
-#### Create S3 bucket
+## Step 1 – Task Definition is Managed by Terraform
 
-1. Navigate to **S3 management console**
-2. In the Bucket console, choose **Create bucket**
+The LiveCap task definition is managed entirely by Terraform –
+**do not register task definitions manually from a JSON file**. When you update
+the image tag in a Terraform variable and run `terraform apply`, Terraform
+automatically registers a new task definition revision and triggers a rolling
+update on the ECS service.
 
-![Create bucket](/images/5-Workshop/5.3-S3-vpc/create-bucket.png)
+Key fields in the actual task definition:
 
-3. In **the Create bucket console**
-+ **Name the bucket**: choose a name that hasn't been given to any bucket globally (hint: lab number and your name)
+| Field | Value |
+|---|---|
+| Family | `livecap-target-backend-dev` |
+| Container name | `livecap-backend` |
+| Image | `<account>.dkr.ecr.ap-southeast-1.amazonaws.com/livecap-backend:<sha>-amd64` |
+| Port mapping | Container 8000 → Host 8000 |
+| CPU | 256 (0.25 vCPU) |
+| Memory | 512 MB |
+| Execution role | `livecap-execution-role` (pulls image, writes logs) |
+| Task role | `livecap-task-role` (calls Transcribe, Translate, S3) |
+| Network mode | `awsvpc` |
 
-![Bucket name](/images/5-Workshop/5.3-S3-vpc/bucket-name.png)
+To inspect the currently running revision:
 
-+ Leave other fields as they are (default)
-+ Scroll down and choose **Create bucket**
+```powershell
+aws ecs describe-task-definition `
+  --task-definition livecap-target-backend-dev `
+  --region ap-southeast-1 --profile livecap-codex `
+  --query "taskDefinition.{Family:family, Revision:revision, Image:containerDefinitions[0].image}"
+```
 
-![Create](/images/5-Workshop/5.3-S3-vpc/create-button.png) 
+## Step 2 – Update the ECS Service via Terraform
 
-+ Successfully create S3 bucket.
+The correct service in the cluster is `livecap-target-service-dev`.
+Terraform is the recommended way to update the service – it handles dependency
+ordering correctly and prevents drift:
 
-![Success](/images/5-Workshop/5.3-S3-vpc/bucket-success.png)
+```powershell
+# Check current service status
+aws ecs describe-services `
+  --cluster livecap-cluster-dev `
+  --services livecap-target-service-dev `
+  --region ap-southeast-1 --profile livecap-codex `
+  --query "services[0].{Status:status, Running:runningCount, Desired:desiredCount}"
+```
 
-#### Connect to EC2 with session manager
+If you need to force-deploy a new revision outside Terraform (dev only):
 
-+ For this workshop, you will use **AWS Session Manager** to access several **EC2 instances**. **Session Manager** is a fully managed **AWS Systems Manager** capability that allows you to manage your **Amazon EC2 instances**  and on-premises virtual machines (VMs) through an interactive one-click browser-based shell. Session Manager provides secure and auditable instance management without the need to open inbound ports, maintain bastion hosts, or manage SSH keys.
+```powershell
+$cluster = "livecap-cluster-dev"
+$service = "livecap-target-service-dev"
+$taskDef = "livecap-target-backend-dev:<revision>"  # replace with actual revision number
 
-+ First Cloud AI Journey [Lab](https://000058.awsstudygroup.com/1-introduce/) for indepth understanding of Session manager.
+aws ecs update-service `
+  --cluster $cluster `
+  --service $service `
+  --task-definition $taskDef `
+  --force-new-deployment `
+  --region ap-southeast-1 `
+  --profile livecap-codex
 
-1. In the **AWS Management Console**, start typing ```Systems Manager``` in the quick search box and press **Enter**:
+# Wait until the service is stable
+aws ecs wait services-stable `
+  --cluster $cluster `
+  --services $service `
+  --region ap-southeast-1 `
+  --profile livecap-codex
+```
 
-![system manager](/images/5-Workshop/5.3-S3-vpc/sm.png)
+## Step 3 – Verify the Service is Running
 
-2. From the **Systems Manager** menu, find **Node Management** in the left menu and click **Session Manager**:
+Check the service status from the console or CLI:
 
-![system manager](/images/5-Workshop/5.3-S3-vpc/sm1.png)
+```powershell
+aws ecs describe-services `
+  --cluster livecap-cluster-dev `
+  --services livecap-target-service-dev `
+  --region ap-southeast-1 --profile livecap-codex `
+  --query "services[0].{Status:status,Running:runningCount,Desired:desiredCount}"
+```
 
-3. Click **Start Session**, and select **the EC2 instance** named **Test-Gateway-Endpoint**. 
-{{% notice info %}}
-This EC2 instance is already running in "VPC Cloud" and will be used to test connectivity to Amazon S3 through the Gateway endpoint you just created (s3-gwe). {{% /notice %}}
+Expected output:
 
-![Start session](/images/5-Workshop/5.3-S3-vpc/start-session.png)
+```json
+{
+  "Status": "ACTIVE",
+  "Running": 1,
+  "Desired": 1
+}
+```
 
-**Session Manager** will open a new browser tab with a shell prompt: sh-4.2 $
+The AWS Console shows the service with one running task:
 
-![Success](/images/5-Workshop/5.3-S3-vpc/start-session-success.png)
+![ECS service detail showing 1 running task and service status ACTIVE](/images/5-Workshop/5.3-S3-vpc/ecs_service_detail.png)
 
-You have successfully start a session - connect to the EC2 instance in VPC cloud. In the next step, we will create a S3 bucket and a file in it. 
+![ECS tasks tab showing one running task with its task ID and status](/images/5-Workshop/5.3-S3-vpc/ecs_tasks_running.png)
 
-#### Create a file and upload to s3 bucket
+## Step 4 – Verify the ALB Health Check
 
-1. Change to the ssm-user's home directory by typing ```cd ~``` in the CLI
+The ALB checks `/api/health` on port 8000 every 30 seconds. Only targets that
+pass the health check receive traffic.
 
-![Change user's dir](/images/5-Workshop/5.3-S3-vpc/cli1.png)
+View the ALB and its target group in the console:
 
-2. Create a new file to use for testing with the command ```fallocate -l 1G testfile.xyz```, which will create a file of 1GB size named "testfile.xyz".
+![Application Load Balancer list showing livecap ALB](/images/5-Workshop/5.3-S3-vpc/alb_list.png)
 
-![Create file](/images/5-Workshop/5.3-S3-vpc/cli-file.png)
+![ALB detail showing target groups and listener rules](/images/5-Workshop/5.3-S3-vpc/alb_detail.png)
 
-3. Upload file to S3 bucket with command ```aws s3 cp testfile.xyz s3://your-bucket-name```. Replace your-bucket-name with the name of S3 bucket that you created earlier.
+Test the health endpoint directly through CloudFront:
 
-![Uploaded](/images/5-Workshop/5.3-S3-vpc/uploaded.png)
+```powershell
+Invoke-RestMethod https://dpeohr327wt9l.cloudfront.net/api/health
+```
 
-You have successfully uploaded the file to your S3 bucket. You can now terminate the session.
+Expected response:
 
-#### Check object in S3 bucket
+```json
+{"status": "healthy", "version": "1.0.0"}
+```
 
-1. Navigate to S3 console.  
-2. Click the name of your s3 bucket
-3. In the Bucket console, you will see the file you have uploaded to your S3 bucket
+## Step 5 – Verify the ECS Cluster
 
-![Check S3](/images/5-Workshop/5.3-S3-vpc/check-s3-bucket.png)
+The cluster detail page shows all services, running tasks, and capacity
+providers. A healthy cluster has desired = running for all services.
 
-#### Section summary
+![ECS cluster detail page showing livecap-cluster-dev with services](/images/5-Workshop/5.3-S3-vpc/ecs_cluster_detail.png)
 
-Congratulation on completing access to S3 from VPC. In this section, you created a Gateway endpoint for Amazon S3, and used the AWS CLI to upload an object. The upload worked because the Gateway endpoint allowed communication to S3, without needing an Internet Gateway attached to "VPC Cloud". This demonstrates the functionality of the Gateway endpoint as a secure path to S3 without traversing the Public Internet.
+## Session Safety
 
+Before the backend opens any Transcribe or Translate stream, it checks an
+in-memory session registry:
 
+- Maximum **4 concurrent sessions** globally (process-wide)
+- Maximum **1 active session per client IP**
 
-
-
-
-
-
-
-
-
-
-
+Rejected clients receive a `TOO_MANY_SESSIONS` WebSocket close message without
+incurring any AI service cost. Every session exit path (stop, timeout, error,
+disconnect) cleans up audio queues, worker tasks, and the registry entry.

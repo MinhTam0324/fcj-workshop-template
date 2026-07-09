@@ -95,4 +95,4 @@ flowchart LR
 8. **Export**: frontend POST finalized rows đến `/api/sessions/{id}/export`, backend
    ghi TXT vào S3 private và trả về presigned URL có thời hạn.
 
-![Kiến trúc target LiveCap sau blue/green cutover](/images/5-Workshop/5.1-Workshop-overview/diagram1.png)
+![Kiến trúc target LiveCap sau blue/green cutover](/images/3-Project/livecap-target-architecture.png)

@@ -1,82 +1,145 @@
 ---
-title : "Kiểm tra Gateway Endpoint"
-date : 2024-01-01 
-weight : 2
-chapter : false
-pre : " <b> 5.3.2 </b> "
+title: "Deploy & Xác minh ECS Fargate Service"
+date: 2026-07-08
+weight: 2
+chapter: false
+pre: " <b> 5.3.2. </b> "
 ---
 
-#### Tạo S3 bucket
+## Bước 1 – Task Definition do Terraform quản lý
 
-1. Đi đến S3 management console
-2. Trong Bucket console, chọn **Create bucket**
+Task definition của LiveCap được quản lý hoàn toàn bởi Terraform –
+**không deploy bằng file JSON thủ công**. Mỗi khi bạn cập nhật image tag
+trong biến Terraform và chạy `terraform apply`, Terraform sẽ tự đăng ký
+revision task definition mới và trigger rolling update cho ECS service.
 
-![Create bucket](/images/5-Workshop/5.3-S3-vpc/create-bucket.png)
+Các trường quan trọng trong task definition thực tế:
 
-3. Trong Create bucket console
-+ Đặt tên bucket: chọn 1 tên mà không bị trùng trong phạm vi toàn cầu (gợi ý: lab\<số-lab\>\<tên-bạn\>)
+| Trường | Giá trị |
+|---|---|
+| Family | `livecap-target-backend-dev` |
+| Container name | `livecap-backend` |
+| Image | `<account>.dkr.ecr.ap-southeast-1.amazonaws.com/livecap-backend:<sha>-amd64` |
+| Port mapping | Container 8000 → Host 8000 |
+| CPU | 256 (0.25 vCPU) |
+| Memory | 512 MB |
+| Execution role | `livecap-execution-role` (pull image, ghi log) |
+| Task role | `livecap-task-role` (gọi Transcribe, Translate, S3) |
+| Network mode | `awsvpc` |
 
-![Bucket name](/images/5-Workshop/5.3-S3-vpc/bucket-name.png)
+Để xem revision hiện tại đang chạy:
 
+```powershell
+aws ecs describe-task-definition `
+  --task-definition livecap-target-backend-dev `
+  --region ap-southeast-1 --profile livecap-codex `
+  --query "taskDefinition.{Family:family, Revision:revision, Image:containerDefinitions[0].image}"
+```
 
-+ Giữ nguyên giá trị của các fields khác (default)
-+ Kéo chuột xuống và chọn **Create bucket**
+## Bước 2 – Cập nhật ECS Service qua Terraform
 
-![Create](/images/5-Workshop/5.3-S3-vpc/create-button.png)    
+Service đúng trong cluster là `livecap-target-service-dev`.
+Terraform là cách được khuyến nghị để cập nhật service – nó xử lý đúng thứ tự
+dependency và tránh drift:
 
-+ Tạo thành công S3 bucket
+```powershell
+# Xem trạng thái service hiện tại
+aws ecs describe-services `
+  --cluster livecap-cluster-dev `
+  --services livecap-target-service-dev `
+  --region ap-southeast-1 --profile livecap-codex `
+  --query "services[0].{Status:status, Running:runningCount, Desired:desiredCount}"
+```
 
-![Success](/images/5-Workshop/5.3-S3-vpc/bucket-success.png)
+Nếu cần force deploy revision mới (chỉ dùng trong môi trường dev, ngoài Terraform):
 
-#### Kết nối với EC2 bằng session manager
+```powershell
+$cluster = "livecap-cluster-dev"
+$service = "livecap-target-service-dev"
+$taskDef = "livecap-target-backend-dev:<revision>"  # thay bằng số revision thực tế
 
-+ Trong workshop này, bạn sẽ dùng AWS Session Manager để kết nối đến các EC2 instances. Session Manager là 1 tính năng trong dịch vụ Systems Manager được quản lý hoàn toàn bởi AWS. System manager cho phép bạn quản lý Amazon EC2 instances và các máy ảo on-premises (VMs)thông qua 1 browser-based shell. Session Manager cung cấp khả năng quản lý phiên bản an toàn và có thể kiểm tra mà không cần mở cổng vào, duy trì máy chủ bastion host hoặc quản lý khóa SSH.
+aws ecs update-service `
+  --cluster $cluster `
+  --service $service `
+  --task-definition $taskDef `
+  --force-new-deployment `
+  --region ap-southeast-1 `
+  --profile livecap-codex
 
-+ First Cloud AI Journey [Lab](https://000058.awsstudygroup.com/1-introduce/) để hiểu sâu hơn về Session manager.
+# Chờ service ổn định
+aws ecs wait services-stable `
+  --cluster $cluster `
+  --services $service `
+  --region ap-southeast-1 `
+  --profile livecap-codex
+```
 
-1. Trong AWS Management Console, gõ Systems Manager trong ô tìm kiếm và nhấn Enter:
+## Bước 3 – Xác minh service đang chạy
 
-![system manager](/images/5-Workshop/5.3-S3-vpc/sm.png)
+Kiểm tra trạng thái service từ console hoặc CLI:
 
-2. Từ **Systems Manager** menu, tìm **Node Management** ở thanh bên trái và chọn **Session Manager**:
+```powershell
+aws ecs describe-services `
+  --cluster livecap-cluster-dev `
+  --services livecap-target-service-dev `
+  --region ap-southeast-1 --profile livecap-codex `
+  --query "services[0].{Status:status,Running:runningCount,Desired:desiredCount}"
+```
 
-![system manager](/images/5-Workshop/5.3-S3-vpc/sm1.png)
+Kết quả mong đợi:
 
-3. Click Start Session, và chọn EC2 instance tên **Test-Gateway-Endpoint**. 
-{{% notice info %}}
-Phiên bản EC2 này đã chạy trong "VPC cloud" và sẽ được dùng để kiểm tra khả năng kết nối với Amazon S3 thông qua điểm cuối Cổng mà bạn vừa tạo (s3-gwe). {{% /notice %}}
+```json
+{
+  "Status": "ACTIVE",
+  "Running": 1,
+  "Desired": 1
+}
+```
 
-![Start session](/images/5-Workshop/5.3-S3-vpc/start-session.png)
+AWS Console hiển thị service với một task đang chạy:
 
-Session Manager sẽ mở browser tab mới với shell prompt: sh-4.2 $
+![Chi tiết ECS service – 1 task đang chạy, trạng thái ACTIVE](/images/5-Workshop/5.3-S3-vpc/ecs_service_detail.png)
 
-![Success](/images/5-Workshop/5.3-S3-vpc/start-session-success.png)
+![Tab Tasks của ECS – task đang chạy với task ID và trạng thái](/images/5-Workshop/5.3-S3-vpc/ecs_tasks_running.png)
 
-Bạn đã bắt đầu phiên kết nối đến EC2 trong VPC Cloud thành công. Trong bước tiếp theo, chúng ta sẽ tạo một  S3 bucket và một tệp trong đó.
-#### Create a file and upload to s3 bucket
+## Bước 4 – Xác minh ALB health check
 
-1. Đổi về ssm-user's thư mục bằng lệnh "cd ~" 
+ALB kiểm tra `/api/health` trên port 8000 mỗi 30 giây. Chỉ target nào pass
+health check mới nhận được traffic.
 
-![Change user's dir](/images/5-Workshop/5.3-S3-vpc/cli1.png)
+Xem ALB và target group trên console:
 
-2. Tạo 1 file để kiểm tra bằng lệnh "fallocate -l 1G testfile.xyz", 1 file tên "testfile.xyz" có kích thước 1GB sẽ được tạo.
+![Danh sách Application Load Balancer – ALB livecap](/images/5-Workshop/5.3-S3-vpc/alb_list.png)
 
-![Create file](/images/5-Workshop/5.3-S3-vpc/cli-file.png)
+![Chi tiết ALB – target group và listener rule](/images/5-Workshop/5.3-S3-vpc/alb_detail.png)
 
-3. Tải file mình vừa tạo lên S3 với lệnh "aws s3 cp testfile.xyz s3://your-bucket-name". Thay your-bucket-name bằng tên S3 bạn đã tạo.
+Test health endpoint trực tiếp qua CloudFront:
 
-![Uploaded](/images/5-Workshop/5.3-S3-vpc/uploaded.png)
+```powershell
+Invoke-RestMethod https://dpeohr327wt9l.cloudfront.net/api/health
+```
 
-Bạn đã tải thành công tệp lên bộ chứa S3 của mình. Bây giờ bạn có thể kết thúc session.
+Kết quả mong đợi:
 
-#### Kiểm tra object trong S3 bucket
+```json
+{"status": "healthy", "version": "1.0.0"}
+```
 
-1. Đi đến S3 console.  
-2. Click tên s3 bucket của bạn
-3. Trong Bucket console, bạn sẽ thấy tệp bạn đã tải lên S3 bucket của mình
+## Bước 5 – Xác minh ECS Cluster
 
-![Check S3](/images/5-Workshop/5.3-S3-vpc/check-s3-bucket.png)
+Trang chi tiết cluster hiển thị tất cả service, task đang chạy và capacity
+provider. Cluster healthy có desired = running ở tất cả service.
 
-#### Tóm tắt
+![Trang chi tiết ECS cluster livecap-cluster-dev với các service](/images/5-Workshop/5.3-S3-vpc/ecs_cluster_detail.png)
 
-Chúc mừng bạn đã hoàn thành truy cập S3 từ VPC. Trong phần này, bạn đã tạo gateway endpoint cho Amazon S3 và sử dụng AWS CLI để tải file lên. Quá trình tải lên hoạt động vì gateway endpoint cho phép giao tiếp với S3 mà không cần Internet gateway gắn vào "VPC Cloud". Điều này thể hiện chức năng của gateway endpoint như một đường dẫn an toàn đến S3 mà không cần đi qua pub    lic Internet.
+## Session Safety
+
+Trước khi backend mở bất kỳ stream Transcribe hay Translate nào, nó kiểm tra
+registry session trong bộ nhớ:
+
+- Tối đa **4 session đồng thời** toàn hệ thống (process-wide)
+- Tối đa **1 session active trên mỗi client IP**
+
+Client bị từ chối nhận thông báo `TOO_MANY_SESSIONS` qua WebSocket mà không
+gây ra bất kỳ chi phí AI service nào. Mọi đường thoát session (stop, timeout,
+lỗi, mất kết nối) đều dọn sạch audio queue, worker task và registry entry.

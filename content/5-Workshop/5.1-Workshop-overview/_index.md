@@ -98,4 +98,4 @@ flowchart LR
    which writes a TXT object to the private transcript bucket and returns a
    time-limited presigned URL.
 
-![LiveCap target architecture after blue/green cutover](/images/5-Workshop/5.1-Workshop-overview/diagram1.png)
+![LiveCap target architecture after blue/green cutover](/images/3-Project/livecap-target-architecture.png)
