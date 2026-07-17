@@ -65,7 +65,7 @@ Hệ thống không lưu raw audio. Chỉ transcript text đã finalized mới �
 
 ## 5. Kiến trúc giải pháp
 
-![Kiến trúc giải pháp LiveCap](/images/2-Proposal/platform_architecture.jpeg)
+![Kiến trúc giải pháp LiveCap](/images/3-Project/livecap-target-architecture.png)
 
 Các tài nguyên regional chạy tại `ap-southeast-1`. CloudFront là public entry
 point global. Môi trường live đã xác minh dùng một Fargate task sau ALB multi-AZ;
